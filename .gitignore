@@ -1,2 +1,42 @@
 deeplab_model
 models
+
+# OS files
+.DS_Store
+Thumbs.db
+._*
+
+# Environment files
+.env
+.env.*
+
+# Dependencies
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Test & Generated files
+test-images/*
+!test-images/.gitkeep
+test-results/
+test-data/
+*.log
+
+# Storage directories
+api/storage/uploads/*
+!api/storage/uploads/.gitkeep
+api/storage/logs/*
+!api/storage/logs/.gitkeep
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-*
+
+# Temporary files
+tmp/
+*.tmp
+*.swp

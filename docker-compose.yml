@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  # API service - Laravel/PHP
+  api:
+    image: php:8.1-apache
+    container_name: body-measurement-api
+    ports:
+      - "8080:80"
+    volumes:
+      - ./api:/var/www/api
+      - ./testing-frontend:/var/www/html/testing-frontend
+    environment:
+      - APP_ENV=development
+      - APP_DEBUG=true
+    depends_on:
+      - python
+    command: >
+      bash -c "
+        apt-get update && 
+        apt-get install -y curl libzip-dev zip unzip && 
+        docker-php-ext-install zip pdo_mysql && 
+        a2enmod rewrite && 
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && 
+        mkdir -p /var/www/api/storage/logs && 
+        mkdir -p /var/www/api/storage/uploads && 
+        chmod -R 777 /var/www/api/storage && 
+        mv /var/www/html/testing-frontend /var/www/html/testing-frontend_original && 
+        ln -sf /var/www/html/testing-frontend_original /var/www/html/testing-frontend &&
+        cp -f /var/www/api/public/.htaccess /var/www/html/.htaccess 2>/dev/null || true &&
+        echo 'SetEnv APP_ENV development' > /var/www/html/.htaccess &&
+        echo 'DirectoryIndex index.php index.html' >> /var/www/html/.htaccess &&
+        echo 'RewriteEngine On' >> /var/www/html/.htaccess &&
+        echo 'RewriteRule ^api/v1/(.*)$ /var/www/api/public/index.php [QSA,L]' >> /var/www/html/.htaccess &&
+        echo '<?php phpinfo(); ?>' > /var/www/html/info.php &&
+        echo '<?php echo json_encode([\"status\" => \"ok\", \"timestamp\" => time()]); ?>' > /var/www/html/api/v1/status.php &&
+        echo 'API is running!' > /var/www/html/index.html &&
+        apache2-foreground
+      "
+
+  # Python measurement service
+  python:
+    image: python:3.9
+    container_name: body-measurement-python
+    volumes:
+      - ./python:/app/python
+      - ./test-images:/app/test-images
+      - ./test-results:/app/test-results
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 && 
+        pip install numpy opencv-python mediapipe torch torchvision onnx onnxruntime transformers accelerate safetensors && 
+        mkdir -p /app/python/spatiallm && 
+        cd /app/python && 
+        # Set up the SpatialLM mock or use repo
+        if [ -d \"/app/python/spatiallm_repo\" ]; then
+          echo 'Using actual SpatialLM repository' && 
+          cd /app/python/spatiallm_repo && 
+          pip install -e . || echo 'SpatialLM installation failed, falling back to mock' && 
+          cd /app/python
+        else
+          echo '# Mock SpatialLM module for testing' > /app/python/spatiallm/__init__.py && 
+          echo 'def process_depth_data(data): return {\"scale_factor\": 1.0}' >> /app/python/spatiallm/__init__.py
+        fi && 
+        tail -f /dev/null
+      " 

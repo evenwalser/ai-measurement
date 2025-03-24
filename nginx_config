@@ -1,0 +1,52 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    # API endpoint handling
+    location /api/v1 {
+        # Pass API requests to the Laravel backend
+        root /var/www/api/public;
+        try_files $uri $uri/ /index.php?$query_string;
+        
+        # PHP handling for API
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
+
+    # Testing frontend
+    location / {
+        root /var/www/testing-frontend;
+        index index.html;
+        try_files $uri $uri/ =404;
+        
+        # Ensure HTML files are served with the correct content type
+        types {
+            text/html html htm;
+            text/css css;
+            application/javascript js;
+        }
+    }
+    
+    # Testing frontend alias (for backwards compatibility)
+    location /testing {
+        alias /var/www/testing-frontend;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+    
+    # Handle uploaded images
+    location /uploads {
+        alias /var/www/api/public/uploads;
+    }
+    
+    # Static assets handling
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires max;
+        log_not_found off;
+        add_header Cache-Control "public, max-age=31536000";
+    }
+} 

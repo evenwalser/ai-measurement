@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Body Measurement API Testing Tool</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css' rel='stylesheet'>
+    <style>
+        .result-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .preview-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class='container py-5'>
+        <h1 class='text-center mb-4'>Body Measurement API Testing Tool</h1>
+        
+        <div class='row'>
+            <div class='col-md-6 mb-4'>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h5 class='card-title'>Upload Image</h5>
+                    </div>
+                    <div class='card-body'>
+                        <form id='uploadForm' enctype='multipart/form-data'>
+                            <div class='mb-3'>
+                                <label for='imageUpload' class='form-label'>Select a full-body image</label>
+                                <input type='file' class='form-control' id='imageUpload' name='image' accept='image/*' required>
+                            </div>
+                            
+                            <div class='mb-3'>
+                                <label for='referenceObject' class='form-label'>Reference Object</label>
+                                <select class='form-select' id='referenceObject' name='reference'>
+                                    <option value='card'>Credit Card (85.60 × 53.98 mm)</option>
+                                    <option value='a4'>A4 Paper (210 × 297 mm)</option>
+                                    <option value='letter'>Letter Paper (8.5 × 11 inches)</option>
+                                    <option value='custom'>Custom (specify dimensions)</option>
+                                </select>
+                            </div>
+                            
+                            <div id='customDimensions' class='mb-3 d-none'>
+                                <div class='row'>
+                                    <div class='col-md-6'>
+                                        <label for='customWidth' class='form-label'>Width (mm)</label>
+                                        <input type='number' class='form-control' id='customWidth' name='custom_width' step='0.01'>
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <label for='customHeight' class='form-label'>Height (mm)</label>
+                                        <input type='number' class='form-control' id='customHeight' name='custom_height' step='0.01'>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type='submit' class='btn btn-primary'>Get Measurements</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class='col-md-6'>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h5 class='card-title'>Preview</h5>
+                    </div>
+                    <div class='card-body'>
+                        <div class='preview-container'>
+                            <img id='previewImage' class='preview-image d-none' src='#' alt='Preview'>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class='card mt-4'>
+                    <div class='card-header'>
+                        <h5 class='card-title'>Measurement Results</h5>
+                    </div>
+                    <div class='card-body'>
+                        <div id='resultsContainer' class='result-container'>
+                            <div class='text-center text-muted'>
+                                <p>Upload an image to see measurements</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class='row mt-4'>
+            <div class='col-12'>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h5 class='card-title'>API Response (Raw)</h5>
+                    </div>
+                    <div class='card-body'>
+                        <pre id='apiResponse' class='bg-light p-3 rounded'>No data yet</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js'></script>
+    <script src='script.js'></script>
+</body>
+</html> 
