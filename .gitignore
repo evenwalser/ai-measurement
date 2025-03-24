@@ -4,11 +4,15 @@ models
 # OS files
 .DS_Store
 Thumbs.db
-._*
+*.swp
+*~
 
 # Environment files
 .env
 .env.*
+.venv/
+venv/
+ENV/
 
 # Dependencies
 node_modules/
@@ -16,13 +20,30 @@ vendor/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
+.installed.cfg
+*.egg
 
-# Test & Generated files
+# Test and generated files
 test-images/*
 !test-images/.gitkeep
 test-results/
-test-data/
+tmp/
+*.tmp
 *.log
 
 # Storage directories
@@ -34,9 +55,8 @@ api/storage/logs/*
 # IDE files
 .idea/
 .vscode/
-*.sublime-*
+*.sublime-project
+*.sublime-workspace
 
-# Temporary files
-tmp/
-*.tmp
-*.swp
+# SpatialLM repository
+python/spatiallm_repo/
